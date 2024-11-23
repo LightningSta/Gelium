@@ -72,14 +72,13 @@ public class ImageView {
 
             int w = Math.min(tileWidth, imageWidth - x);
             int h = Math.min(tileHeight, imageHeight - y);
-            // Настройка параметров чтения для текущего тайла
             ImageReadParam param = reader.getDefaultReadParam();
             Rectangle region = new Rectangle(x, y, w, h);
             param.setSourceRegion(region);
 
-            // Читаем только заданный регион изображения
+
             BufferedImage tile = reader.read(0, param);
-            ImageIO.write(tile, fileName.split(".")[1], outputStream);
+            ImageIO.write(tile, fileName.split("\\.")[1], outputStream);
             System.out.println("Разбиение завершено.");
         } catch (IOException e) {
             e.printStackTrace();

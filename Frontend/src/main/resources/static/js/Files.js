@@ -16,6 +16,27 @@ document.addEventListener('DOMContentLoaded', ()=>{
             )
         })
     }
+    function onLoad(){
+        const tilesCountSelect = document.getElementById('tilesCount');
+        const tilesNumberSelect = document.getElementById('tilesNumber');
+
+        function updateTilesNumber() {
+            const tilesCount = parseInt(tilesCountSelect.value);
+
+            tilesNumberSelect.innerHTML = '';
+
+            for (let i =1; i <= tilesCount; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                tilesNumberSelect.appendChild(option);
+            }
+        }
+
+        tilesCountSelect.addEventListener('change', updateTilesNumber);
+
+        updateTilesNumber();
+    }
     function bundle(){
         document.getElementById('folder_plus').addEventListener('mousedown',()=>{
             addpopupFolder();
@@ -25,6 +46,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         })
     }
     onFileload()
+    onLoad()
     overlay()
     bundle()
 })
@@ -61,17 +83,19 @@ function addItem(file){
     const sizeFile = document.createElement('a')
     const date = document.createElement('a')
 
-    const tiles = document.createElement('img')
+    var tiles = null;
     iconFile.src='/images/'+file.fileIcon+'.svg'
     iconFile.classList.add('icons')
 
     nameFile.text=file.fileName
-    if(file.fileName.contains('.')){
-        nameFile.href='/imageview_tile/'+sessionStorage.getItem('nickname')+'?fileName='+ file.fileName;
+    if(file.fileName.includes('.')){
+        tiles = document.createElement('img')
         tiles.classList.add('icons')
+        tiles.id=file.fileName;
         tiles.src='/images/book.svg';
         tiles.addEventListener('mousedown',()=>{
-            titleGet(sessionStorage.getItem('nickname')+'?fileName='+ file.fileName);
+            titleGet(sessionStorage.getItem('nickname')+'?fileName='+ file.fileName,
+                tiles.id);
         })
     }
     sizeFile.text=file.fileSize
@@ -83,6 +107,9 @@ function addItem(file){
     divFile.appendChild(sizeFile)
     divFile.appendChild(date)
     divFile.appendChild(document.createElement('br'))
+    if(tiles!==null){
+        divFile.appendChild(tiles)
+    }
     fsbody.appendChild(divFile)
 
 
@@ -184,11 +211,11 @@ function uploadImage(){
         closePopup();
     });
 }
-function titleGet(tile){
+function titleGet(tile,id){
     const popup = document.getElementById('tiles-get');
     const overlay = document.getElementById('overlay')
 
-    const openPopupBtn = document.querySelector('.icons[src="/images/book.svg"]');
+    const openPopupBtn = document.getElementById(id);
     const cancelBtn = document.getElementById('cancel4');
     const submitBtn = document.getElementById('sub4');
 
@@ -214,7 +241,8 @@ function titleGet(tile){
     overlay.addEventListener('click', closePopup);
 
     submitBtn.addEventListener('click', async () => {
-        const input = document.getElementById('imageInput');
-        window.location.href='/image_tile/'+tile+'&tileCount'
+        const tilesCount = document.getElementById('tilesCount').value;
+        const tilesNumber = document.getElementById('tilesNumber').value;
+        window.location.href='/imageview_tile/'+tile+'&tileCount='+tilesCount + '&tileNumber='+tilesNumber
     });
 }
