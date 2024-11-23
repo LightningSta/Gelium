@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>Главная</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="shortcut icon" href="./svg/icon.svg" type="image/x-icon">
+
+</head>
+<body>
+<header>
+    <p class="logoname" onclick="home()">Gelium</p>
+    <div class="headertext">
+        <p onclick="course()">О нас</p>
+        <p onclick="course()">Обратная связь</p>
+        <p onclick="course()">Отзывы</p>
+    </div>
+    <div class="header_buttons">
+        <button class="login" onclick="sentToReg()">Регистрация</button>
+        <button class="sign" onclick="sentToLogin()">Войти</button>
+    </div>
+</header>
+
+<section class="main">
+    <p>Приветствуем вас на главной странице Gelium!</p>
+    <button  onclick="sentToLogin()">Приступить</button>
+</section>
+
+<footer>
+    <p>&copy; 2024 Gelium. Все права защищены.</p>
+</footer>
+<script src="/js/Auth.js"></script>
+</body>
+</html>

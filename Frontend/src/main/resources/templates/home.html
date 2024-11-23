@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>Главная</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="shortcut icon" href="./svg/icon.svg" type="image/x-icon">
+
+</head>
+<body>
+<header>
+    <p class="logoname" onclick="home()">Gelium</p>
+    <div class="headertext">
+        <p onclick="course()">О нас</p>
+        <p onclick="course()">Обратная связь</p>
+        <p onclick="course()">Отзывы</p>
+        <p onclick="profile()">Профиль</p>
+    </div>
+</header>
+
+<section class="main">
+    <button onclick="intoFs()">Войти в файловую систему</button>
+</section>
+
+<footer>
+    <p>&copy; 2024 Gelium. Все права защищены.</p>
+</footer>
+<script src="/js/Redirects.js"></script>
+<script src="/js/fileSystem.js"></script>
+<script>
+    async function uploadImage() {
+        const input = document.getElementById('imageInput');
+        const formData = new FormData();
+        formData.append('file', input.files[0]);
+
+        try {
+            const response = await fetch(domen+'/api/files/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer '+sessionStorage.getItem('authToken')
+                },
+                body: formData
+            });
+            if (response.ok) {
+                const data = await response.json(); // Получаем путь до загруженного файла
+                var url = data.url
+                window.location.href = '/imageview/' + url;
+            } else {
+                alert('Failed to upload image');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error uploading image');
+        }
+    }
+</script>
+</body>
+</html>

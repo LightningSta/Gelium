@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}" />
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="shortcut icon" href="./svg/icon.svg" type="image/x-icon">
+
+</head>
+<body>
+<header>
+    <p class="logoname" onclick="home()">Gelium</p>
+    <div class="headertext">
+        <p onclick="course()">О нас</p>
+        <p onclick="course()">Обратная связь</p>
+        <p onclick="course()">Отзывы</p>
+    </div>
+    <div class="header_buttons">
+        <button class="login" onclick="sentToReg()">Регистрация</button>
+        <button class="sign" onclick="sentToLogin()">Войти</button>
+    </div>
+</header>
+
+<section class="signin">
+    <form id="signin" name="signin" action="/login" method="post">
+        <h2>Авторизация</h2>
+        <label for="username">Логин:</label>
+        <input type="text" id="username" name="username" placeholder="Ваш логин..." required>
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" placeholder="Ваш пароль..." required>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <p class="regtxt" onclick="sentToReg()">Создать новый аккаунт</p>
+        <input type="submit" value="Авторизоваться">
+    </form>
+</section>
+
+<footer>
+    <p>&copy; 2024 Gelium. Все права защищены.</p>
+</footer>
+<script src="/js/Auth.js"></script>
+</body>
+</html>

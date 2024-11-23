@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>Файловая система</title>
+    <link rel="stylesheet" href="/css/fs.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="shortcut icon" href="./svg/icon.svg" type="image/x-icon">
+</head>
+<body>
+<div id="info">
+    <p>Gelium</p>
+</div>
+<div id="fs-body">
+    <button id="back">..</button>
+    <br>
+    <div id="content-fs">
+    </div>
+    <button id="back-list" onclick="backfiles()"><-</button><button id="nextlist" onclick="nextfiles()">-></button>
+</div>
+<div class="popup" id="createFolder">
+    <p>Создать папку?</p>
+    <input id="naming" value="test" type="text"/>
+    <br>
+    <div class="buttons">
+        <button id="cancel2" >Отменить</button>
+        <button id="sub2" >Создать</button>
+    </div>
+</div>
+<div class="popup" id="addFile">
+    <p>Добавить фотографию?</p>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" accept="image/*" required>
+    </form>
+    <br>
+    <div class="buttons">
+        <button id="cancel3" >Отменить</button>
+        <button id="sub3" >Создать</button>
+    </div>
+</div>
+<div id="actions">
+    <img src="/images/folder-plus.svg" class="icons" id="folder_plus">
+    <img src="/images/trash-can_old.svg" class="icons">
+    <img src="/images/file-zipper_old.svg" class="icons">
+    <img src="/images/upload.svg" class="icons" id="upload">
+</div>
+<div class="popup" id="tiles-get">
+    <p>Выбор тайла</p>
+    <select id="tilesCount">
+    </select>
+    <select id="tilesNumber">
+    </select>
+    <br>
+    <div class="buttons">
+        <button id="cancel4" >Отменить</button>
+        <button id="sub4" >Подтвердить</button>
+    </div>
+</div>
+<script src="/js/Redirects.js"></script>
+<script src="/js/Files.js"></script>
+</body>
+</html>

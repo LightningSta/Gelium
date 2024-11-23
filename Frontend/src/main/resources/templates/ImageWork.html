@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org " lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>Файловая система</title>
+    <link rel="stylesheet" href="/css/fs.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="shortcut icon" href="./svg/icon.svg" type="image/x-icon">
+</head>
+<body>
+<div id="info">
+    <p>Gelium</p>
+</div>
+<div id="actionss">
+    <td align="center"><a id="imgPlus" onMouseup="MM_swapImgRestore()" onmousedown="MM_swapImage('Image4','','/images//plus-active2.png',1) "><img src="/images/plus.png" name="Image4" width="35" height="35" border="0" id="img_plus" onmouseover="document.getElementById('img_plus').title = 'Увеличить'"></a></td>
+    <td align="center"><a id="imgMinus" onMouseup="MM_swapImgRestore()" onmousedown="MM_swapImage('Image5','','/images/minus-active2.png',1)"><img src="/images/minus.png" name="Image5" width="35" height="35" border="0" id="img_minus" onmouseover="document.getElementById('img_minus').title = 'Уменьшить'"></a></td>
+    <td align="center"><a id="OneAtOne" onMouseup="MM_swapImgRestore()" onmousedown="MM_swapImage('Image6','','/images/1_1-active2.png',1)"><img src="/images/1_1.png" name="Image6" width="35" height="35" border="0" id="img_1_1" onmouseover="document.getElementById('img_1_1').title = 'Реальный размер'"></a></td>
+    <td align="left" valign="middle" height="35px"><img style="height:35px;" src="/images/hand.png" onmousedown="imagefun7()" id="getImage7" onmouseover="title = 'Перемещать изображение'"></td>
+    <td width="50%">Разрешение:<br>
+        <select id = "dpi" name="dpi" class="list_s">
+            <option value="200" >200</option>
+            <option value="300" >300</option>
+            <option value="400" >400</option>
+            <option value="500" >500</option>
+            <option value="600" >600</option>
+            <option value="700" >700</option>
+            <option value="800" >800</option>
+            <option value="900" >900</option>
+            <option value="1000" >1000</option>
+            <option value="1200" >1200</option>
+            <option value="1600" >1600</option>
+        </select>
+        <br>
+    </td>
+    <img src="/images/book.svg"  id="action-book" class="icons">
+</div>
+<div class="popup" id="actions-in">
+    <p>Ваши действия</p>
+    <select id="act">
+        <option value="compress">Сжать</option>
+        <option value="dpichange">Сменить Dpi</option>
+    </select>
+    <br>
+    <div class="buttons">
+        <button id="cancel2" >Отменить</button>
+        <button id="sub2" >Подтвердить</button>
+    </div>
+</div>
+<div id="fs-body">
+    <img id="dynamicImage" th:src="${imagePath}" alt="Uploaded Image"  />
+</div>
+
+<script src="/js/Redirects.js"></script>
+<script src="/js/GraphicalPart.js"></script>
+<script src="/js/ImageActions.js"></script>
+</body>
+</html>
