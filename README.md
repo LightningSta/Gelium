@@ -1,7 +1,7 @@
 # Документация по решению 
 **Как запустить данное решение**  
 Перед запуском решения убедитесь что у вас установлен PostgerSQL и введите данные от postgres
-в DatabaseService по пути src/main/resources/application.properties, а именно
+в DatabaseService по пути src/main/resources/application.properties, а именно  
 spring.datasource.username=*Имя пользователя  
 spring.datasource.password=*Ваш пароль  
 spring.datasource.url=*Url где распалагается бд  
@@ -13,8 +13,8 @@ spring.datasource.url=*Url где распалагается бд
 5. FrontentApplication
 ____  
 **Описание решения**  
-
-
+Наше решение использует микросервисную архитектуру.  
+Server регистрирует все наши сервисы. Сервис же Files занимается работай с файлами, сервис Database введет работу с бд. Сервис Gateway является нашим шлюзом, который перенаправляет запросы на нужные сервисы. 
 
 
 
