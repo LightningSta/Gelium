@@ -42,7 +42,7 @@ public class FilesLogic {
     public static void clearCache(){
         File[] files= new File(cache).listFiles();
         for (int i = 0; i < files.length; i++) {
-            files[i].delete();
+            System.out.println( files[i].delete());
         }
     }
     public boolean createProject(String projectName, String group_name){

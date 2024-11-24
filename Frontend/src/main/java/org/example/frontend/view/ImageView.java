@@ -49,6 +49,9 @@ public class ImageView {
 
     private File inCache(BufferedImage image,String name,Integer tileCount, Integer tileNumber) throws IOException {
         File[] files = new File(cache).listFiles();
+        if(atte==11){
+            atte=1;
+        }
         for (int i = 0; i < files.length; i++) {
             if(files[i].getName().startsWith(String.valueOf(atte))){
                 File file = new File(cache,atte+"_"+tileCount+"_"+tileNumber+"_"+name);
@@ -60,9 +63,6 @@ public class ImageView {
         File file = new File(cache,atte+"_"+tileCount+"_"+tileNumber+"_"+name);
         ImageIO.write(image,name.substring(name.lastIndexOf(".")+1 ),file);
         atte+=1;
-        if(atte==11){
-            atte=1;
-        }
         return file;
     }
 
