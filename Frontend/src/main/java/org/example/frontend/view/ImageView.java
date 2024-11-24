@@ -57,6 +57,7 @@ public class ImageView {
                 files[i].delete();
                 File file = new File(cache,atte+"_"+tileCount+"_"+tileNumber+"_"+name);
                 ImageIO.write(image,name.substring(0,name.lastIndexOf(".") ),file);
+                System.out.println(file.createNewFile());
                 atte+=1;
                 return file;
             }
