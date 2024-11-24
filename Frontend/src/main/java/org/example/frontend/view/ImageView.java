@@ -52,19 +52,14 @@ public class ImageView {
         for (int i = 0; i < files.length; i++) {
             if(files[i].getName().startsWith(String.valueOf(atte))){
                 files[i].delete();
-                File file = new File(cache,atte+"_"+name);
+                File file = new File(cache,atte+"_"+tileCount+"_"+tileNumber+"_"+name);
                 ImageIO.write(image,name.substring(0,name.lastIndexOf(".") ),file);
                 atte+=1;
                 return file;
             }
         }
         File file = new File(cache,atte+"_"+tileCount+"_"+tileNumber+"_"+name);
-        if(file.getAbsolutePath().equals(".tif")||
-            file.getAbsolutePath().equals(".tiff")){
-            ImageIO.write(image,"PNG",file);
-        }else{
-            ImageIO.write(image,name.substring(name.lastIndexOf(".")+1 ),file);
-        }
+        ImageIO.write(image,name.substring(name.lastIndexOf(".")+1 ),file);
         atte+=1;
         if(atte==11){
             atte=1;
@@ -104,6 +99,7 @@ public class ImageView {
         Path path;
         if(pathMb!=null){
             path=Paths.get(pathMb);
+
         }else{
             try (ImageInputStream input = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
@@ -139,7 +135,19 @@ public class ImageView {
                 throw new RuntimeException(e);
             }
         }
-        resource=new UrlResource(path.toUri());
+        if(path.endsWith(".tif")||path.endsWith(".tiff")){
+            BufferedImage tiffImage = ImageIO.read(path.toFile());
+
+            // Конвертируем TIFF в PNG
+            outputStream = new ByteArrayOutputStream();
+            ImageIO.write(tiffImage, "png", outputStream);
+
+            byte[] imageBytes = outputStream.toByteArray();
+            System.out.println("bytes");
+            resource = new ByteArrayResource(imageBytes);
+        }else{
+            resource=new UrlResource(path.toUri());
+        }
         if(resource==null){
             byte[] imageBytes = outputStream.toByteArray();
             System.out.println("bytes");
