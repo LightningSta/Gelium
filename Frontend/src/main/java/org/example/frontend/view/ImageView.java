@@ -29,6 +29,8 @@ import java.util.Iterator;
 @Controller
 public class ImageView {
 
+
+    private String FS="C:/Users/nazar/OneDrive/Desktop/Projects/";
     @GetMapping("/imageview/{nickname}")
     public String serveImage(@PathVariable String nickname, @RequestParam("fileName") String fileName, @RequestHeader HttpHeaders headers, Model model) throws IOException {
         model.addAttribute("imagePath", "/images/Uploads/" + nickname + "?fileName=" + fileName);
@@ -46,46 +48,88 @@ public class ImageView {
     @GetMapping("/image_tile/Uploads/{nickname}")
     public ResponseEntity<Resource> serveHome(@PathVariable String nickname, @RequestParam("fileName") String fileName,
                                               @RequestParam("tileCount") Integer tileCount,
-                                              @RequestParam("tileNumber") Integer tileNumber)  {
-        Path filePath = Paths.get("C:/Users/nazar/OneDrive/Desktop/Projects/"+nickname).resolve(fileName);
+                                              @RequestParam("tileNumber") Integer tileNumber) throws IOException {
+        Path filePath = Paths.get(FS+nickname).resolve(fileName);
+        File dir = new File(FS+nickname+"/"+fileName.replace(".","_"));
+        String file_format = fileName.substring(fileName.lastIndexOf(".")+1);
         Resource resource = null;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        int x = 0,y=0;
         File file = filePath.toFile();
-        try (ImageInputStream input = ImageIO.createImageInputStream(file)) {
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
-            if (!readers.hasNext()) {
-                throw new RuntimeException("Формат изображения не поддерживается.");
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        if(dir.exists()) {
+            if(tileCount<16){
+                int ras = 16/tileCount;
+                int startP=(tileNumber*ras)-1;
+                for (int i = startP; i < startP; i++) {
+                    File file_tile = new File(dir,"tile_"+i+"."+file_format);
+                    BufferedImage image = ImageIO.read(file_tile);
+                    if(file_format.contains("tif")){
+                        ImageIO.write(image, "PNG", outputStream);
+                    }else{
+                        ImageIO.write(image, file_format, outputStream);
+                    }
+                }
+            }else if(tileCount==16){
+                File file_tile = new File(dir,"tile_"+tileNumber+"."+file_format);
+                BufferedImage image = ImageIO.read(file_tile);
+                if(file_format.contains("tif")){
+                    ImageIO.write(image, "PNG", outputStream);
+                }else{
+                    ImageIO.write(image, file_format, outputStream);
+                }
+            }else{
+                int trueNum = 1;
+                int ras = tileCount/16;
+                trueNum = tileNumber/ras==0 ? 1 : tileNumber/ras +1;
+                File file_tile = new File(dir,"tile_"+trueNum+"."+file_format);
+                BufferedImage image = ImageIO.read(file_tile);
+                int tileWidth = image.getWidth()/ras;
+                int tileHeight = image.getHeight()/ras;
+                int startCoff= ras- (tileNumber%ras + 1);
+                image=image.getSubimage(tileWidth*startCoff,tileHeight*startCoff,tileWidth,tileHeight);
+                if(file_format.contains("tif")){
+                    ImageIO.write(image, "PNG", outputStream);
+                }else{
+                    ImageIO.write(image, file_format, outputStream);
+                }
             }
+        }else{
+            int x = 0,y=0;
+            try (ImageInputStream input = ImageIO.createImageInputStream(file)) {
+                Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
+                if (!readers.hasNext()) {
+                    throw new RuntimeException("Формат изображения не поддерживается.");
+                }
 
-            ImageReader reader = readers.next();
-            reader.setInput(input);
-            int imageWidth = reader.getWidth(0);
-            int imageHeight = reader.getHeight(0);
-
-
-            int tileWidth = imageWidth/tileCount;
-            int tileHeight = imageHeight/tileCount;
-            x=tileWidth*tileNumber;
-            y=tileHeight*tileNumber;
-
-            int w = Math.min(tileWidth, imageWidth - x);
-            int h = Math.min(tileHeight, imageHeight - y);
-            ImageReadParam param = reader.getDefaultReadParam();
-            Rectangle region = new Rectangle(x, y, w, h);
-            param.setSourceRegion(region);
+                ImageReader reader = readers.next();
+                reader.setInput(input);
+                int imageWidth = reader.getWidth(0);
+                int imageHeight = reader.getHeight(0);
 
 
-            BufferedImage tile = reader.read(0, param);
-            ImageIO.write(tile, fileName.split("\\.")[1], outputStream);
-            System.out.println("Разбиение завершено.");
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+                int tileWidth = imageWidth/tileCount;
+                int tileHeight = imageHeight/tileCount;
+                x=tileWidth*tileNumber;
+                y=tileHeight*tileNumber;
+
+                int w = Math.min(tileWidth, imageWidth - x);
+                int h = Math.min(tileHeight, imageHeight - y);
+                ImageReadParam param = reader.getDefaultReadParam();
+                Rectangle region = new Rectangle(x, y, w, h);
+                param.setSourceRegion(region);
+
+
+                BufferedImage tile = reader.read(0, param);
+                ImageIO.write(tile, fileName.split("\\.")[1], outputStream);
+                System.out.println("Разбиение завершено.");
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         }
-        byte[] imageBytes = outputStream.toByteArray();
-        resource = new ByteArrayResource(imageBytes);
+        if(resource==null){
+            byte[] imageBytes = outputStream.toByteArray();
+            resource = new ByteArrayResource(imageBytes);
+        }
         if(file.getName().endsWith(".png")) {
             return ResponseEntity.ok()
                     .contentType(MediaType.IMAGE_PNG)

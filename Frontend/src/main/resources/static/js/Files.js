@@ -196,6 +196,7 @@ function uploadImage(){
         const input = document.getElementById('imageInput');
         const formData = new FormData();
         formData.append('file', input.files[0]);
+        formData.append('namefolder',sessionStorage.getItem('nickname'))
         try {
             const response = await fetch(domen + '/api/files/upload', {
                 method: 'POST',

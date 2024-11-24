@@ -1,13 +1,30 @@
 package org.example.files.Logic;
 
 import com.google.gson.Gson;
+import com.twelvemonkeys.imageio.plugins.tiff.TIFFImageWriteParam;
 import org.example.files.model.FileInPage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.*;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Component
 public class FilesLogic {
@@ -60,7 +77,36 @@ public class FilesLogic {
         return b;
     }
 
+    public static void FileSave(MultipartFile file, File userFolder) throws IOException, InterruptedException, ExecutionException {
+        Files.copy(file.getInputStream(), userFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        if(file.getOriginalFilename().endsWith(".tif")||file.getOriginalFilename().endsWith(".tiff")){
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                    "magick",
+                    userFolder.getAbsolutePath(),
+                    "-compress", "Zip",
+                    "output.tif"
+            );
+            processBuilder.directory(userFolder.getParentFile());
+            processBuilder.redirectErrorStream(true);
 
+            try {
+                Process process = processBuilder.start();
+
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println(line);
+                    }
+                }
+
+                int exitCode = process.waitFor();
+                System.out.println("Process exited with code: " + exitCode);
+
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 

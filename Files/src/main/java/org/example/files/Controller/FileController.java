@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import static org.example.files.Logic.Images.Compressor.convertToTiff;
 
@@ -79,14 +80,13 @@ public class FileController {
 
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file,@RequestParam("namefolder") String namefolder) throws IOException {
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(loadpath+"\\"+namefolder, fileName);
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file,@RequestParam("namefolder") String namefolder) throws IOException, ExecutionException, InterruptedException {
+        Path filePath = Paths.get(loadpath+"\\"+namefolder, file.getOriginalFilename());
 
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
+        //Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        filesLogic.FileSave(file, filePath.toFile());
         // Возвращаем URL загруженного файла
-        String fileUrl = fileName;
+        String fileUrl = file.getOriginalFilename();
         JSONObject answer = new JSONObject();
         answer.put("url", fileUrl);
         return ResponseEntity.ok(answer.toString(2));
