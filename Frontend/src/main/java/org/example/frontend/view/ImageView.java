@@ -137,7 +137,7 @@ public class ImageView {
         System.out.println(path.toAbsolutePath());;
         String path_n = path.toAbsolutePath().toString();
         if(path_n.contains(".tif")
-                ||path_n.contains(".tif")){
+                ||path_n.contains(".tiff")){
             BufferedImage tiffImage = ImageIO.read(path.toFile());
 
             // Конвертируем TIFF в PNG
