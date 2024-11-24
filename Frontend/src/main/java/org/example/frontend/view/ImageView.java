@@ -30,7 +30,7 @@ import java.util.Iterator;
 public class ImageView {
 
 
-    private int atte=1;
+        private int atte=1;
     private static String cache="C:/Users/nazar/OneDrive/Desktop/Projects/.cache";
     private String FS="C:/Users/nazar/OneDrive/Desktop/Projects/";
     @GetMapping("/imageview/{nickname}")
@@ -56,7 +56,7 @@ public class ImageView {
             if(files[i].getName().startsWith(String.valueOf(atte))){
                 files[i].delete();
                 File file = new File(cache,atte+"_"+tileCount+"_"+tileNumber+"_"+name);
-                ImageIO.write(image,name.substring(0,name.lastIndexOf(".") ),file);
+                ImageIO.write(image,name.substring(name.lastIndexOf(".")+1 ),file);
                 System.out.println(file.createNewFile());
                 atte+=1;
                 return file;
