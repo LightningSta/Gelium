@@ -53,10 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
             requestAnimationFrame(realSize);
         }
     }
-    function preStart(){
-        giveSelection(sel1.value);
-    }
-    preStart()
     overlay();
     // Add event listeners for drag functionality
     button.addEventListener('click',imageZoomOnClick)
