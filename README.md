@@ -5,6 +5,8 @@
 spring.datasource.username=*Имя пользователя  
 spring.datasource.password=*Ваш пароль  
 spring.datasource.url=*Url где распалагается бд  
+Также нужно будет установить:
+Magick https://imagemagick.org/index.php  
 Для того чтобы запустить данное решение нужно запустить 
 1. ServerApplication
 2. FilesApplication
