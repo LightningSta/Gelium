@@ -30,7 +30,7 @@ import java.util.Iterator;
 public class ImageView {
 
 
-        private int atte=1;
+    private int atte=1;
     private static String cache="C:/Users/nazar/OneDrive/Desktop/Projects/.cache";
     private String FS="C:/Users/nazar/OneDrive/Desktop/Projects/";
     @GetMapping("/imageview/{nickname}")
