@@ -38,7 +38,13 @@ public class FilesLogic {
         }
         return false;
     }
-
+    private static String cache="C:/Users/nazar/OneDrive/Desktop/Projects/.cache";
+    public static void clearCache(){
+        File[] files= new File(cache).listFiles();
+        for (int i = 0; i < files.length; i++) {
+            files[i].delete();
+        }
+    }
     public boolean createProject(String projectName, String group_name){
         createDir(new File(startFileSystem));
         if(createDir(new File(startFileSystem,group_name))){

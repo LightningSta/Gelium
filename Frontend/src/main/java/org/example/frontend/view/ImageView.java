@@ -30,6 +30,8 @@ import java.util.Iterator;
 public class ImageView {
 
 
+    private int atte=1;
+    private static String cache="C:/Users/nazar/OneDrive/Desktop/Projects/.cache";
     private String FS="C:/Users/nazar/OneDrive/Desktop/Projects/";
     @GetMapping("/imageview/{nickname}")
     public String serveImage(@PathVariable String nickname, @RequestParam("fileName") String fileName, @RequestHeader HttpHeaders headers, Model model) throws IOException {
@@ -45,6 +47,48 @@ public class ImageView {
     }
 
 
+    private File inCache(BufferedImage image,String name,Integer tileCount, Integer tileNumber) throws IOException {
+        File[] files = new File(cache).listFiles();
+        for (int i = 0; i < files.length; i++) {
+            if(files[i].getName().startsWith(String.valueOf(atte))){
+                files[i].delete();
+                File file = new File(cache,atte+"_"+name);
+                ImageIO.write(image,name.substring(0,name.lastIndexOf(".") ),file);
+                atte+=1;
+                return file;
+            }
+        }
+        File file = new File(cache,atte+"_"+tileCount+"_"+tileNumber+"_"+name);
+        if(file.getAbsolutePath().equals(".tif")||
+            file.getAbsolutePath().equals(".tiff")){
+            ImageIO.write(image,"PNG",file);
+        }else{
+            ImageIO.write(image,name.substring(name.lastIndexOf(".")+1 ),file);
+        }
+        atte+=1;
+        if(atte==11){
+            atte=1;
+        }
+        return file;
+    }
+
+
+    private String checkinCache(Integer tileCount, Integer tileNumber,String name) throws IOException {
+        File[] files = new File(cache).listFiles();
+        for (int i = 0; i < files.length; i++) {
+            File file = files[i];
+            String name_file = file.getName();
+            String[] dates = name_file.split("_");
+            if(dates[1].contains(String.valueOf(tileCount))
+            && dates[2].contains(String.valueOf(tileNumber))
+            && name_file.endsWith(name)){
+                return file.getAbsolutePath();
+            }
+
+        }
+        return null;
+    }
+
     @GetMapping("/image_tile/Uploads/{nickname}")
     public ResponseEntity<Resource> serveHome(@PathVariable String nickname, @RequestParam("fileName") String fileName,
                                               @RequestParam("tileCount") Integer tileCount,
@@ -55,45 +99,12 @@ public class ImageView {
         Resource resource = null;
         File file = filePath.toFile();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        if(dir.exists()) {
-            if(tileCount<16){
-                int ras = 16/tileCount;
-                int startP=(tileNumber*ras)-1;
-                for (int i = startP; i < startP; i++) {
-                    File file_tile = new File(dir,"tile_"+i+"."+file_format);
-                    BufferedImage image = ImageIO.read(file_tile);
-                    if(file_format.contains("tif")){
-                        ImageIO.write(image, "PNG", outputStream);
-                    }else{
-                        ImageIO.write(image, file_format, outputStream);
-                    }
-                }
-            }else if(tileCount==16){
-                File file_tile = new File(dir,"tile_"+tileNumber+"."+file_format);
-                BufferedImage image = ImageIO.read(file_tile);
-                if(file_format.contains("tif")){
-                    ImageIO.write(image, "PNG", outputStream);
-                }else{
-                    ImageIO.write(image, file_format, outputStream);
-                }
-            }else{
-                int trueNum = 1;
-                int ras = tileCount/16;
-                trueNum = tileNumber/ras==0 ? 1 : tileNumber/ras +1;
-                File file_tile = new File(dir,"tile_"+trueNum+"."+file_format);
-                BufferedImage image = ImageIO.read(file_tile);
-                int tileWidth = image.getWidth()/ras;
-                int tileHeight = image.getHeight()/ras;
-                int startCoff= ras- (tileNumber%ras + 1);
-                image=image.getSubimage(tileWidth*startCoff,tileHeight*startCoff,tileWidth,tileHeight);
-                if(file_format.contains("tif")){
-                    ImageIO.write(image, "PNG", outputStream);
-                }else{
-                    ImageIO.write(image, file_format, outputStream);
-                }
-            }
+        int x = 0,y=0;
+        String pathMb=checkinCache(tileCount,tileNumber,fileName);
+        Path path;
+        if(pathMb!=null){
+            path=Paths.get(pathMb);
         }else{
-            int x = 0,y=0;
             try (ImageInputStream input = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
                 if (!readers.hasNext()) {
@@ -120,14 +131,18 @@ public class ImageView {
 
                 BufferedImage tile = reader.read(0, param);
                 ImageIO.write(tile, fileName.split("\\.")[1], outputStream);
+                path = Paths.get(inCache(tile,fileName,tileCount,tileNumber).getAbsolutePath());
+                System.out.println(path.toUri());
                 System.out.println("Разбиение завершено.");
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
+        resource=new UrlResource(path.toUri());
         if(resource==null){
             byte[] imageBytes = outputStream.toByteArray();
+            System.out.println("bytes");
             resource = new ByteArrayResource(imageBytes);
         }
         if(file.getName().endsWith(".png")) {
@@ -143,6 +158,8 @@ public class ImageView {
                     .body(resource);
         }
     }
+
+
 
 
     @GetMapping("/images/Uploads/{nickname}")
