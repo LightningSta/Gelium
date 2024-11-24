@@ -51,7 +51,6 @@ public class ImageView {
         File[] files = new File(cache).listFiles();
         for (int i = 0; i < files.length; i++) {
             if(files[i].getName().startsWith(String.valueOf(atte))){
-                files[i].delete();
                 File file = new File(cache,atte+"_"+tileCount+"_"+tileNumber+"_"+name);
                 ImageIO.write(image,name.substring(0,name.lastIndexOf(".") ),file);
                 atte+=1;
@@ -135,7 +134,10 @@ public class ImageView {
                 throw new RuntimeException(e);
             }
         }
-        if(path.endsWith(".tif")||path.endsWith(".tiff")){
+        System.out.println(path.toAbsolutePath());;
+        String path_n = path.toAbsolutePath().toString();
+        if(path_n.contains(".tif")
+                ||path_n.contains(".tif")){
             BufferedImage tiffImage = ImageIO.read(path.toFile());
 
             // Конвертируем TIFF в PNG
