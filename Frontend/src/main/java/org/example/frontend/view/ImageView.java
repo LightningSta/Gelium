@@ -54,6 +54,7 @@ public class ImageView {
         }
         for (int i = 0; i < files.length; i++) {
             if(files[i].getName().startsWith(String.valueOf(atte))){
+                files[i].delete();
                 File file = new File(cache,atte+"_"+tileCount+"_"+tileNumber+"_"+name);
                 ImageIO.write(image,name.substring(0,name.lastIndexOf(".") ),file);
                 atte+=1;
@@ -98,7 +99,6 @@ public class ImageView {
         Path path;
         if(pathMb!=null){
             path=Paths.get(pathMb);
-
         }else{
             try (ImageInputStream input = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
@@ -114,15 +114,14 @@ public class ImageView {
 
                 int tileWidth = imageWidth/tileCount;
                 int tileHeight = imageHeight/tileCount;
-                x=tileWidth*tileNumber;
-                y=tileHeight*tileNumber;
+                x=tileWidth*(tileNumber-1);
+                y=tileHeight*(tileNumber-1);
 
                 int w = Math.min(tileWidth, imageWidth - x);
                 int h = Math.min(tileHeight, imageHeight - y);
                 ImageReadParam param = reader.getDefaultReadParam();
                 Rectangle region = new Rectangle(x, y, w, h);
                 param.setSourceRegion(region);
-
 
                 BufferedImage tile = reader.read(0, param);
                 ImageIO.write(tile, fileName.split("\\.")[1], outputStream);
